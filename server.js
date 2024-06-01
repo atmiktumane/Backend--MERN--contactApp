@@ -5,6 +5,9 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
+// built-in middleware for POST request body
+app.use(express.json());
+
 app.use("/api/contacts", require("./routes/contactRoutes"));
 
 app.listen(port, () => {
