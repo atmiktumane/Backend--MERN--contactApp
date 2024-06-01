@@ -1,3 +1,6 @@
+// mongoDb gives response data as promise,
+// in order to handle promise, we use try-catch block in controllers to handle exceptions
+// instead of try-catch block, we can use express-async-handler.
 const asyncHandler = require("express-async-handler");
 
 //@desc Get all contacts
