@@ -10,18 +10,9 @@ const {
 const router = express.Router();
 
 // get all contacts
-router.route("/").get(getContacts);
-
-// create new contact
-router.route("/").post(createContact);
+router.route("/").get(getContacts).post(createContact);
 
 // get contact w.r.t id
-router.route("/:id").get(getContact);
-
-// update contact w.r.t id
-router.route("/:id").put(updateContact);
-
-// delete contact w.r.t id
-router.route("/:id").delete(deleteContact);
+router.route("/:id").get(getContact).put(updateContact).delete(deleteContact);
 
 module.exports = router;
