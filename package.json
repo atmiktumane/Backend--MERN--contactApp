@@ -1,0 +1,15 @@
+{
+  "name": "contactapp-api",
+  "version": "1.0.0",
+  "description": "Contact Application backend using ExpressJs, NodeJs, MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Atmik Tumane",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
