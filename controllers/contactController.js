@@ -3,18 +3,21 @@
 // instead of try-catch block, we can use express-async-handler.
 const asyncHandler = require("express-async-handler");
 
+const Contact = require("../models/contactModel");
+
 //@desc Get all contacts
 //route GET "/api/contacts"
 //access Public
 const getContacts = asyncHandler(async (req, res) => {
-    res.status(200).json({ message: "Get all contacts" });
+    const contacts = await Contact.find();
+    res.status(200).json(contacts);
 });
 
 //@desc Create new contact
 //route POST "/api/contacts"
 //access Public
 const createContact = asyncHandler(async (req, res) => {
-    console.log("Request body : ", req.body);
+    // console.log("Request body : ", req.body);
 
     const { name, email, phone } = req.body;
 
@@ -22,7 +25,13 @@ const createContact = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error("All the Fields are required");
     }
-    res.status(201).json({ message: "Created new contact" });
+
+    const contact = await Contact.create({
+        name,
+        email,
+        phone,
+    })
+    res.status(201).json(contact);
 });
 
 //@desc Get contact w.r.t id
