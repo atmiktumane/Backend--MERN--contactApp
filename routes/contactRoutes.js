@@ -6,8 +6,12 @@ const {
     updateContact,
     deleteContact,
 } = require("../controllers/contactController");
+const validateToken = require("../middleware/validateTokenHandler");
 
 const router = express.Router();
+
+// Protecting Contact Routes using validateToken Middleware
+router.use(validateToken);
 
 // get all contacts
 router.route("/").get(getContacts).post(createContact);
