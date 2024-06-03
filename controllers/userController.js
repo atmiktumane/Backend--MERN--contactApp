@@ -1,5 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const User = require("../models/userModel");
 
 //@desc Register the User
@@ -50,13 +52,52 @@ const registerUser = asyncHandler(async (req, res) => {
 //route POST "/api/users/login"
 //access Public
 const loginUser = asyncHandler(async (req, res) => {
-    res.json({ message: "Login user" });
+    const { email, password } = req.body;
+
+    // Simple Validation
+    if (!email || !password) {
+        res.status(400);
+        throw new Error("All the fields are mandatory");
+    }
+
+    // Check if User exists in database
+    const user = await User.findOne({ email });
+    if (!user) {
+        res.status(400);
+        throw new Error("User does not exist");
+    }
+
+    // Check Password : Compare req.password with HashedPassword present in database
+    const isMatchPass = await bcrypt.compare(password, user.password);
+    if (!isMatchPass) {
+        res.status(400);
+        throw new Error("Invalid Credentials");
+    }
+
+    // Create JWT Payload
+    const jwtPayload = {
+        user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+        },
+    };
+
+    // Sign JWT Token : Generate Token
+    const accessToken = jwt.sign(
+        jwtPayload,
+        process.env.ACCESS_TOKEN_SECRET_KEY,
+        { expiresIn: "20m" }, // Token expires in 20 minutes
+    );
+
+    res.status(201).json({ "Acess Token": accessToken });
 });
 
 //@desc current User info
 //route GET "/api/users/current"
 //access Private
 const currentUser = asyncHandler(async (req, res) => {
+
     res.json({ message: "Current user info" });
 });
 
