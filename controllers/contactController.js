@@ -59,6 +59,12 @@ const updateContact = asyncHandler(async (req, res) => {
         throw new Error("Contact not found");
     }
 
+    // check if user is authorised or not, with user_id
+    if (contact.user_id.toString() !== req.user.id) {
+        res.status(403);
+        throw new Error("Forbidden, User don't have permission to update other user's contacts");
+    }
+
     const updatedContact = await Contact.findByIdAndUpdate(
         req.params.id,
         req.body,
@@ -71,34 +77,30 @@ const updateContact = asyncHandler(async (req, res) => {
 //route DELETE "/api/contacts/:id"
 //access Private
 const deleteContact = asyncHandler(async (req, res) => {
-    try {
-        const contact = await Contact.findById(req.params.id);
+    const contact = await Contact.findById(req.params.id);
 
-        // if (contact) {
-        //     await contact.remove();
-        //     res.status(200).json(contact);
-        //     console.log("Removed the Contact successfully");
-        // }
-        // else {
-        //     res.status(404);
-        //     throw new Error("Contact not found");
-        // }
-
-
-        // Use deleteOne to delete the user by ID
-        const result = await Contact.deleteOne({ _id: req.params.id });
-
-        if (result.deletedCount === 1) {
-            console.log(`User with ID ${req.params.id} has been deleted.`);
-            res.status(200).json(contact);
-        } else {
-            console.log(`User with ID ${req.params.id} not found.`);
-        }
-    } catch (err) {
-        console.error("Error deleting contact: ", err);
-
+    // Check if requested contact is present in Database or not, in order to delete that contact from Database.
+    if (!contact) {
+        res.status(404);
+        throw new Error("Contact not found");
     }
 
+    // check if user is authorised or not, with user_id
+    if (contact.user_id.toString() !== req.user.id) {
+        res.status(403);
+        throw new Error("Forbidden, User don't have permission to delete other user's contacts");
+    }
+
+    // Use deleteOne to delete the user by ID
+    const result = await Contact.deleteOne({ _id: req.params.id });
+
+    if (result.deletedCount === 1) {
+        console.log(`User with ID ${req.params.id} has been deleted.`);
+    } else {
+        console.log(`User with ID ${req.params.id} not found.`);
+    }
+
+    res.status(200).json(contact);
 });
 
 module.exports = {
